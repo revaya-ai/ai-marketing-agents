@@ -327,6 +327,40 @@
     },
     {
       "parameters": {
+        "promptType": "define",
+        "text": "=Brand Strategy: {{ $('Prepare Data').item.json.brand_strategy || $json.brand_strategy }}\n\nBlog Post: {{ $('Prepare Data').item.json.final_blog || $json.final_blog }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a specialized AI image prompt engineer. Your expertise is crafting detailed, optimized prompts for AI image generation tools (DALL-E, Midjourney, Stable Diffusion, Flux, Ideogram).\n\nBased on the brand strategy and content provided, create comprehensive image generation prompts.\n\n## OUTPUT REQUIREMENTS\n\nGenerate prompts for these image types:\n\n### 1. FEATURED BLOG IMAGE\n- Hero image for the blog post header\n- Should capture the main theme/concept\n- Professional, eye-catching composition\n\n### 2. SOCIAL MEDIA IMAGES\n- Square format (1:1) for Instagram/Facebook\n- Vertical format (9:16) for TikTok/Stories\n- Horizontal format (16:9) for LinkedIn/Twitter\n\n### 3. THUMBNAIL IMAGE\n- YouTube/video thumbnail style\n- Bold, attention-grabbing\n- Clear focal point\n\n### 4. INFOGRAPHIC HEADER\n- Clean, informational style\n- Space for text overlays\n- Data visualization friendly\n\n## PROMPT STRUCTURE\n\nFor each image, provide:\n\n1. **DALL-E Prompt**: Natural language, detailed description\n2. **Midjourney Prompt**: Include style parameters (--ar, --style, --v 6.1)\n3. **Stable Diffusion Prompt**: Include positive prompt + negative prompt + recommended settings\n\n## TECHNICAL SPECIFICATIONS\n\nInclude for each prompt:\n- Aspect ratio\n- Style keywords (photorealistic, illustration, 3D render, etc.)\n- Lighting specifications\n- Color mood (matching brand palette if provided)\n- Composition guidance (rule of thirds, centered, etc.)\n- Quality boosters (8k, highly detailed, professional, etc.)\n\n## STYLE MODIFIERS LIBRARY\n\nUse appropriate modifiers:\n- Photography: DSLR, 85mm lens, bokeh, golden hour, studio lighting\n- Illustration: vector art, flat design, hand-drawn, watercolor\n- 3D: octane render, unreal engine, cinema 4D, isometric\n- Artistic: trending on artstation, concept art, digital painting\n\nReturn as JSON:\n{\n  \"featured_image\": {\n    \"concept\": \"Description of the image concept\",\n    \"dalle_prompt\": \"...\",\n    \"midjourney_prompt\": \"...\",\n    \"stable_diffusion\": {\n      \"positive\": \"...\",\n      \"negative\": \"...\",\n      \"settings\": \"...\"\n    }\n  },\n  \"social_square\": {\n    \"concept\": \"...\",\n    \"dalle_prompt\": \"...\",\n    \"midjourney_prompt\": \"...\",\n    \"stable_diffusion\": {...}\n  },\n  \"social_vertical\": {\n    \"concept\": \"...\",\n    \"dalle_prompt\": \"...\",\n    \"midjourney_prompt\": \"...\",\n    \"stable_diffusion\": {...}\n  },\n  \"social_horizontal\": {\n    \"concept\": \"...\",\n    \"dalle_prompt\": \"...\",\n    \"midjourney_prompt\": \"...\",\n    \"stable_diffusion\": {...}\n  },\n  \"thumbnail\": {\n    \"concept\": \"...\",\n    \"dalle_prompt\": \"...\",\n    \"midjourney_prompt\": \"...\",\n    \"stable_diffusion\": {...}\n  },\n  \"infographic_header\": {\n    \"concept\": \"...\",\n    \"dalle_prompt\": \"...\",\n    \"midjourney_prompt\": \"...\",\n    \"stable_diffusion\": {...}\n  },\n  \"brand_style_guide\": {\n    \"recommended_styles\": [\"...\"],\n    \"color_keywords\": [\"...\"],\n    \"avoid\": [\"...\"]\n  }\n}"
+        }
+      },
+      "id": "agent-image-prompt",
+      "name": "Image Prompt Engineer",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [1780, 1100]
+    },
+    {
+      "parameters": {
+        "model": "gemini-2.0-flash-exp",
+        "options": {
+          "temperature": 0.85
+        }
+      },
+      "id": "gemini-image-prompt",
+      "name": "Gemini - Image Prompt",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [1780, 1240],
+      "credentials": {
+        "googleGeminiApi": {
+          "id": "CREDENTIAL_ID",
+          "name": "Google Gemini API"
+        }
+      }
+    },
+    {
+      "parameters": {
         "mode": "combine",
         "combineBy": "combineAll"
       },
@@ -356,6 +390,12 @@
               "id": "visual_guidelines",
               "name": "visual_guidelines",
               "value": "={{ $('Creative Director').item.json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "image_prompts",
+              "name": "image_prompts",
+              "value": "={{ $('Image Prompt Engineer').item.json.output }}",
               "type": "string"
             }
           ]
@@ -400,6 +440,7 @@
             "typography": "={{ $json.visual_guidelines }}",
             "visual_style": "={{ $json.visual_guidelines }}",
             "logo_concept": "={{ $json.visual_guidelines }}",
+            "image_prompts": "={{ $json.image_prompts }}",
             "distribution_notes": ""
           }
         },
@@ -474,7 +515,7 @@
             {
               "id": "response",
               "name": "response",
-              "value": "=# Distribution Complete - Campaign #{{ $('Prepare Data').item.json.campaign_id }}\n\n## Social Media Posts\n{{ $('Structure Output').item.json.social_media_posts }}\n\n---\n\n## SEO & AEO Metadata\n{{ $('Structure Output').item.json.seo_metadata }}\n\n---\n\n## Visual Guidelines\n{{ $('Structure Output').item.json.visual_guidelines }}\n\n---\n\n*Data saved to Google Sheets*",
+              "value": "=# Distribution Complete - Campaign #{{ $('Prepare Data').item.json.campaign_id }}\n\n## Social Media Posts\n{{ $('Structure Output').item.json.social_media_posts }}\n\n---\n\n## SEO & AEO Metadata\n{{ $('Structure Output').item.json.seo_metadata }}\n\n---\n\n## Visual Guidelines\n{{ $('Structure Output').item.json.visual_guidelines }}\n\n---\n\n## AI Image Generation Prompts\n{{ $('Structure Output').item.json.image_prompts }}\n\n---\n\n*Data saved to Google Sheets*",
               "type": "string"
             },
             {
@@ -500,6 +541,12 @@
               "name": "visual_guidelines",
               "value": "={{ $('Structure Output').item.json.visual_guidelines }}",
               "type": "string"
+            },
+            {
+              "id": "image_prompts",
+              "name": "image_prompts",
+              "value": "={{ $('Structure Output').item.json.image_prompts }}",
+              "type": "string"
             }
           ]
         },
@@ -513,8 +560,8 @@
     },
     {
       "parameters": {
-        "content": "## DISTRIBUTION TEAM\n\n3 Agents Running in Parallel:\n- Social Media Manager\n- SEO & AEO Specialist\n- Creative Director",
-        "height": 880,
+        "content": "## DISTRIBUTION TEAM\n\n4 Agents Running in Parallel:\n- Social Media Manager\n- SEO & AEO Specialist\n- Creative Director\n- Image Prompt Engineer",
+        "height": 1180,
         "width": 440,
         "color": 6
       },
@@ -600,6 +647,11 @@
             "node": "Creative Director",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Image Prompt Engineer",
+            "type": "main",
+            "index": 0
           }
         ],
         [
@@ -666,6 +718,11 @@
             "node": "Creative Director",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Image Prompt Engineer",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -730,6 +787,28 @@
         [
           {
             "node": "Creative Director",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Image Prompt Engineer": {
+      "main": [
+        [
+          {
+            "node": "Merge Distribution",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Gemini - Image Prompt": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Image Prompt Engineer",
             "type": "ai_languageModel",
             "index": 0
           }

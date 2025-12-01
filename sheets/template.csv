@@ -11,4 +11,4 @@ campaign_id,timestamp,brand_strategy,keywords,competitor_analysis,research_notes
 campaign_id,timestamp,blog_outline,blog_draft,final_blog,word_count,content_notes
 
 ## Tab 4: Phase 3 - Distribution
-campaign_id,timestamp,tiktok_script,linkedin_post,instagram_caption,reddit_post,meta_title,meta_description,image_alt_texts,internal_links,schema_markup,featured_image_concept,color_palette,typography,visual_style,logo_concept,distribution_notes
+campaign_id,timestamp,tiktok_script,linkedin_post,instagram_caption,reddit_post,meta_title,meta_description,image_alt_texts,internal_links,schema_markup,featured_image_concept,color_palette,typography,visual_style,logo_concept,image_prompts,distribution_notes

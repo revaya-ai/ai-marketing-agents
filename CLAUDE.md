@@ -4,7 +4,7 @@ This file provides context for Claude Code when working on this project.
 
 ## Project Overview
 
-9-Agent AI Marketing Team for n8n. Modular workflow system with 4 workflows that can run independently or as a coordinated campaign.
+10-Agent AI Marketing Team for n8n. Modular workflow system with 4 workflows that can run independently or as a coordinated campaign.
 
 ## Architecture
 
@@ -13,7 +13,7 @@ Orchestrator (Chat Interface)
        |
        +-- Research Team (3 agents, parallel)
        +-- Content Team (3 agents, sequential)
-       +-- Distribution Team (3 agents, parallel)
+       +-- Distribution Team (4 agents, parallel)
        |
        v
   Google Sheets (data persistence)
@@ -26,7 +26,7 @@ Orchestrator (Chat Interface)
 | `workflows/01-orchestrator.json` | Main router, coordinates teams | Chat |
 | `workflows/02-research-team.json` | Brand Strategy + Keywords + Competitor | Chat/Webhook |
 | `workflows/03-content-team.json` | Planner → Writer → Editor | Chat/Webhook |
-| `workflows/04-distribution-team.json` | Social + SEO/AEO + Creative | Chat/Webhook |
+| `workflows/04-distribution-team.json` | Social + SEO/AEO + Creative + Image Prompts | Chat/Webhook |
 
 ## Key Configuration
 
@@ -83,6 +83,7 @@ The orchestrator references sub-workflows by ID. After importing, update:
 | Social Media Manager | 0.9 | None |
 | SEO & AEO Specialist | 0.7 | None |
 | Creative Director | 0.8 | None |
+| Image Prompt Engineer | 0.85 | None |
 
 ## Common Tasks
 
